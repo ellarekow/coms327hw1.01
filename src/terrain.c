@@ -4,7 +4,6 @@
 
 #define ROWS 21
 #define COLUMNS 80
-#define SEED 32
 
 char BLOCK[ROWS][COLUMNS];
 
@@ -27,42 +26,60 @@ void path_gen(){
     int row;
     int column = rand() % (COLUMNS - 2) + 1;
 
-    for(row = 0; row < ROWS; row++){
-        srand(time(NULL));
-        BLOCK[row][column] = '#';
-        row += (rand() % 2) - 1;
-    }
+    int random = rand() % 12;
 
-    srand(SEED);
+    for(row = 0; row < ROWS; row++){
+        BLOCK[row][column] = '#';
+        if(random % 3 == 0 && column < COLUMNS - 1)
+            column += (rand() % 3) - 1;
+
+        random = rand() % 12;
+    }
+    
     row = rand() % (ROWS - 3) + 1;
 
     for(column = 0; column < COLUMNS; column++){
-        srand(time(NULL));
         BLOCK[row][column] = '#';
-        column += (rand() % 2) - 1;
+        if(random % 3 == 0 && row < ROWS - 1)
+            row += (rand() % 3) - 1;
+        
+        random = rand() % 12;
     }
-    srand(SEED);
 }
 
 void tall_gen(int size, int startR, int startC){
     int row; 
     int column; 
 
-    for(row = startR; row < size; row++){
-        for(column = startC; column < size; column++){
-            BLOCK[row][column] = ',';
+    if(startR == 0)
+        startR += 1;
+
+    if(startC == 0)
+        startC += 1;
+
+    for(row = startR; row < (size + row) && (row < ROWS - 1); row++){
+        for(column = startC; column < (size + column) && (column < COLUMNS - 1); column++){
+            if(BLOCK[row][column] == ' ')
+                BLOCK[row][column] = ',';
         }
     }
     
 }
 
-void clear_gen(int size, int startR, int startC){
+void clearing_gen(int size, int startR, int startC){
     int row; 
     int column; 
 
-    for(row = startR; row < size; row++){
-        for(column = startC; column < size; column++){
-            BLOCK[row][column] = '.';
+    if(startR == 0)
+        startR += 1;
+
+    if(startC == 0)
+        startC += 1;
+
+    for(row = startR; row < (size + row) && (row < ROWS - 1); row++){
+        for(column = startC; column < (size + column) && (column < COLUMNS - 1); column++){
+            if(BLOCK[row][column] == ' ')
+                BLOCK[row][column] = '.';
         }
     }
     
@@ -70,25 +87,83 @@ void clear_gen(int size, int startR, int startC){
 
 void gen_terrain(){
     edge_gen();
+
+    int size = (rand() % 20) + 2;
+    int row = (rand() % 20) + 2;
+    int column = (rand() % 20) + 2; 
+
+    int number = (rand() % 10) + 2;
+
+    int what = (rand() % 100) + 1;
+
+    int i; 
+    for(i = 0; i < number; i++){
+        
+        if(what % 7 == 2){
+            if(row > 0 && column > 0)
+                BLOCK[row][column] = '%';
+        }
+        else if(what % 10 == 3)
+        {
+            if(row > 0 && column > 0)
+                BLOCK[row][column] = '"';
+        }
+
+        else if(what % 3 == 1)
+            clearing_gen(size, row, column);
+
+        else if(what % 2 == 0)
+            tall_gen(size, row, column);
+
+
+        size = (rand() % 10) + 2;
+        row = (rand() % ROWS - 2) + 1;
+        column = (rand() % COLUMNS - 2) + 1;
+        what = rand() % 5;
+    }
     path_gen();
-    // tall_gen(7, 1, 1);
-    clear_gen(7, 1, 1);
+
 }
 
 
 int main(){
-    srand(SEED);
+    int seed = time(NULL);
+    srand(seed);
 
-    printf("\n");
+    printf("Seed: %d\n", seed);
     gen_terrain();
 
     int row, column;
 
     //prints the map
-    
+    char pos; 
     for(row = 0; row < ROWS; row++){
         for(column = 0; column < COLUMNS; column++){
-            printf("%c", BLOCK[row][column]);
+            pos = BLOCK[row][column];
+
+            if(pos == 'C')
+                // red
+                printf("\033[1;31m");
+            else if(pos == '.')
+                // green
+                printf("\033[0;32m");
+            else if(pos == 'M')
+                // blue
+                printf("\033[0;34m");
+            else if(pos == '#')
+                // white
+                printf("\033[0;37m");
+            else if(pos == '"')
+                //yellow 
+                printf("\033[0;33m");
+            else if(pos == '%')
+                //black
+                printf("\033[0;30m");
+            else if(pos == ',')
+                //bright green
+                printf("\033[92;102m");
+
+            printf("%c", pos);
         }
         printf("\n");
     }
