@@ -21,40 +21,70 @@ void edge_gen(){
     }
 }
 
-void path_gen(){
-    // N to S path
+void path_gen(int n, int s, int e, int w){
     int row;
-    int column = rand() % (COLUMNS - 2) + 1;
+    int column = n;
 
     int random = rand() % 12;
 
-    
+    // N to S path
     for(row = 0; row < ROWS; row++){
-        if(column == 0)
-            column++;
-        else if(column == ROWS - 1)
-            column--;
+        if(row < ROWS - 3){
+            if(column == 0)
+                column++;
+            else if(column == ROWS - 1)
+                column--;
 
-        BLOCK[row][column] = '#';
-        if(random % 3 == 0 && column < COLUMNS - 1)
-            column += (rand() % 3) - 1;
+            BLOCK[row][column] = '#';
+            if(random % 3 == 0 && column < COLUMNS - 1)
+                column += (rand() % 3) - 1;
 
-        random = rand() % 12;
+            random = rand() % 12;
+        }
+
+        else{
+            while(column < s){
+                BLOCK[row][column] = '#';
+                column ++;
+            }
+
+            while(column > s){
+                BLOCK[row][column] = '#';
+                column --;
+            }
+            BLOCK[row][column] = '#';
+        }
     }
-    
-    row = rand() % (ROWS - 3) + 1;
 
+    row = n;
+
+    // W to E
     for(column = 0; column < COLUMNS; column++){
-        if(row == 0)
-            row++;
-        else if(row == ROWS - 1)
-            row--;
+        if(column < COLUMNS - 3){
+            if(row == 0)
+                row++;
+            else if(row == ROWS - 1)
+                row--;
 
-        BLOCK[row][column] = '#';
-        if(random % 3 == 0 && row < ROWS - 1)
-            row += (rand() % 3) - 1;
-        
-        random = rand() % 12;
+            BLOCK[row][column] = '#';
+            if(random % 3 == 0 && row < ROWS - 1)
+                row += (rand() % 3) - 1;
+            
+            random = rand() % 12;
+        }
+
+         else{
+            while(row < e){
+                BLOCK[row][column] = '#';
+                row++;
+            }
+
+            while(row > e){
+                BLOCK[row][column] = '#';
+                row--;
+            }
+            BLOCK[row][column] = '#';
+        }
     }
 }
 
@@ -62,40 +92,85 @@ void patch_gen(int size, int startR, int startC, char c){
     int row; 
     int column; 
 
-    int sizeR, sizeC;
-    
-
     if(startR == 0)
         startR += 1;
 
     if(startC == 0)
         startC += 1;
 
-    sizeR = size;
-    for(row = startR; size >= 0 && row < ROWS - 1; row++){
-        sizeC = sizeR;
-        for(column = startC; size >= 0 && column < COLUMNS - 1; column++){
+    for(row = startR; (row < size + startR) && row < ROWS - 1; row++){
+        for(column = startC; (column < size + startC) && column < COLUMNS - 1; column++){
             if(BLOCK[row][column] == ' ')
                 BLOCK[row][column] = c;
-            sizeC--;
         }
-        sizeR--;
 
     }
     
 }
 
 void mart_gen(){
+    int row = (rand() % ROWS - 4);
+        if(row < 1)
+            row = 2;
+    int column = (rand() % COLUMNS - 4);
+        if(column < 1)
+            column = 2;
+
+    int i, j;
+
+    for(i = row; i < row + 3; i++){
+        for(j = column; j < column + 3; j++){
+            if(BLOCK[i][j] == '#'){
+                row = (rand() % ROWS - 4);
+                    if(row < 1)
+                        row = 2;
+                column = (rand() % COLUMNS - 4);
+                    if(column < 1)
+                        column = 2;
+            }
+        }
+    }
+
+    int found = 0;
+    int tempj;
+
+    for(i = row; i < row + 3; i++){
+        for(j = column; j < column + 3; j++){
+            BLOCK[i][j] = 'M';
+            if(j == 1 && found == 0){
+                tempj = column;
+                
+                while(BLOCK[i][tempj] != 0 && tempj < COLUMNS - 4){
+                    if(BLOCK[i][tempj] == '#'){
+                        found = tempj;
+                        tempj = column;
+
+                        while(tempj < found){
+                            BLOCK[i][tempj + 1] = '#';
+                            tempj++;
+                        }
+                        tempj++;
+                    }
+                    tempj++;
+                }
+
+            }
+        }
+    }
+
     
+
+
+
 }
 
 void gen_terrain(){
     edge_gen();
     
-    int size = (rand() % 3);
+    int size = (rand() % 10) + 3;
     int row = (rand() % 5) + 2;
     int column = (rand() % 10) + 2; 
-    int number = (rand() % 10) + 2;
+    int number = (rand() % 20) + 2;
 
 
     //loop to generate ~2 clearing and ~2 long grass
@@ -106,12 +181,12 @@ void gen_terrain(){
         else   
             patch_gen(size, row, column, ',');
 
-        size = (rand() % 3);
+        size = (rand() % 10) + 3;
         row = (rand() % 3) + 1;
         column = (rand() % 5) + 1; 
     }
  
-    int what = rand() % 3;
+    int what = rand() % 4;
 
     //generates other objects
     for(i = 0; i < number; i++){
@@ -125,13 +200,20 @@ void gen_terrain(){
             if(row > 0 && column > 0)
                 BLOCK[row][column] = '"';
         }
+        else if(what == 2)
+            patch_gen(size, row, column, '.');
 
-        size = (rand() % 3);
+        else
+            patch_gen(size, row, column, ',');
+
+
+        size = (rand() % 10) + 2;
         row = (rand() % ROWS - 2) + 1;
         column = (rand() % COLUMNS - 2) + 1;
-        what = (rand() % 3);
+        what = (rand() % 4);
     }
-    path_gen();
+    path_gen(10, 10, 10, 10);
+    mart_gen();
 }
 
 
