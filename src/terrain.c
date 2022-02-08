@@ -139,7 +139,7 @@ void building_gen(char c)
 
     int i, j;
 
-    while (BLOCK[row - 1][column] != '#' && BLOCK[row][column - 1] != '#' && BLOCK[row][column - 1] != 'M' && BLOCK[row][column - 1] != 'C' && row > 0 && row < ROWS && column > 0 && column < COLUMNS)
+    while (BLOCK[row - 1][column] != '#' && BLOCK[row][column - 1] != '#' && BLOCK[row][column - 1] != 'M' && BLOCK[row][column - 1] != 'C' && row > 0 && row < ROWS && column > 0 && column < COLUMNS && BLOCK[row + 1][column] != '#' && BLOCK[row][column + 1] != '#' && BLOCK[row][column + 1] != 'M' && BLOCK[row][column + 1] != 'C')
     {
         row = ((rand() % ROWS) - 4);
         if (row < 1)
@@ -153,12 +153,16 @@ void building_gen(char c)
     {
         for (j = column; j < column + 6; j++)
         {
-            if ((i == row || j == column || i == row + 3 || j == column + 5 && BLOCK[i][j] != '%') && BLOCK[i][j] != 'M' && BLOCK[i][j] != 'C' && BLOCK[i][j] != '#')
-                BLOCK[i][j] = '#';
-            else if (BLOCK[i][j] == '#')
-                BLOCK[i][j] = c;
+            if (i == row || j == column || i == row + 3 || j == column + 5)
+            {
+                if (BLOCK[i][j] != '%')
+                    BLOCK[i][j] = '#';
+            }
             else
-                BLOCK[i][j] = c;
+            {
+                if (BLOCK[i][j] != '%')
+                    BLOCK[i][j] = c;
+            }
         }
     }
 }
@@ -173,9 +177,19 @@ void gen_terrain(int n, int e, int s, int w)
     int column = (rand() % 10) + 2;
     int number = (rand() % 20) + 2;
 
-    int what = rand() % 4;
+    int what = rand() % 3;
 
     int i;
+    for (i = 0; i < 2; i++)
+    {
+        patch_gen(size, row, column, ',');
+
+        size = (rand() % 10) + 2;
+        row = (rand() % ROWS - 2) + 1;
+        column = (rand() % COLUMNS - 2) + 1;
+        what = (rand() % 3);
+    }
+
     // generates other objects
     for (i = 0; i < number; i++)
     {
@@ -196,7 +210,7 @@ void gen_terrain(int n, int e, int s, int w)
         size = (rand() % 10) + 2;
         row = (rand() % ROWS - 2) + 1;
         column = (rand() % COLUMNS - 2) + 1;
-        what = (rand() % 4);
+        what = (rand() % 3);
     }
     path_gen(n, s, e, w);
     building_gen('M');
@@ -237,8 +251,6 @@ int main()
     {
         for (column = 0; column < COLUMNS; column++)
         {
-            // if(BLOCK[row][column] == ' ')
-            //     BLOCK[row][column] = '.';
 
             pos = BLOCK[row][column];
 
