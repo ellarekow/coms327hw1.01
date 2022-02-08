@@ -7,7 +7,7 @@
 
 char BLOCK[ROWS][COLUMNS];
 
-//generates the rock boarder
+// generates the rock boarder
 void edge_gen()
 {
     int row, column;
@@ -105,7 +105,7 @@ void path_gen(int n, int s, int e, int w)
     }
 }
 
-//generates patches of different types
+// generates patches of different types
 void patch_gen(int size, int startR, int startC, char c)
 {
     int row;
@@ -127,7 +127,7 @@ void patch_gen(int size, int startR, int startC, char c)
     }
 }
 
-//builds the different buildings
+// builds the different buildings
 void building_gen(char c)
 {
     int row = (rand() % ROWS - 4);
@@ -153,15 +153,17 @@ void building_gen(char c)
     {
         for (j = column; j < column + 6; j++)
         {
-            if (i == row || j == column || i == row + 3 || j == column + 5)
+            if ((i == row || j == column || i == row + 3 || j == column + 5 && BLOCK[i][j] != '%') && BLOCK[i][j] != 'M' && BLOCK[i][j] != 'C' && BLOCK[i][j] != '#')
                 BLOCK[i][j] = '#';
+            else if (BLOCK[i][j] == '#')
+                BLOCK[i][j] = c;
             else
                 BLOCK[i][j] = c;
         }
     }
 }
 
-//generates the map
+// generates the map
 void gen_terrain(int n, int e, int s, int w)
 {
     edge_gen();
@@ -171,22 +173,9 @@ void gen_terrain(int n, int e, int s, int w)
     int column = (rand() % 10) + 2;
     int number = (rand() % 20) + 2;
 
-    // loop to generate ~2 clearing and ~2 long grass
-    int i;
-    for (i = 0; i < 4; i++)
-    {
-        if (i == 1 || i == 3)
-            patch_gen(size, row, column, '.');
-        else
-            patch_gen(size, row, column, ',');
-
-        size = (rand() % 10) + 3;
-        row = (rand() % 3) + 1;
-        column = (rand() % 5) + 1;
-    }
-
     int what = rand() % 4;
 
+    int i;
     // generates other objects
     for (i = 0; i < number; i++)
     {
@@ -201,9 +190,6 @@ void gen_terrain(int n, int e, int s, int w)
             if (row > 0 && column > 0)
                 BLOCK[row][column] = '"';
         }
-        else if (what == 2)
-            patch_gen(size, row, column, '.');
-
         else
             patch_gen(size, row, column, ',');
 
@@ -215,6 +201,16 @@ void gen_terrain(int n, int e, int s, int w)
     path_gen(n, s, e, w);
     building_gen('M');
     building_gen('C');
+
+    // creates the border of impassible rocks
+    for (row = 0; row < ROWS; row++)
+    {
+        for (column = 0; column < COLUMNS; column++)
+        {
+            if (BLOCK[row][column] == ' ')
+                BLOCK[row][column] = '.';
+        }
+    }
 }
 
 int main()

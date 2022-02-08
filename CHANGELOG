@@ -1,0 +1,47 @@
+commit 13065196b24f7265e636a76a6dd879342e9ae7c9
+Author: ellarekow <ellarekow@gmail.com>
+Date:   Wed Feb 2 21:49:09 2022 -0600
+
+    Finalized project
+
+commit bed41be11a37024dd0e6a5b589fdbc10136b0f8c
+Author: ellarekow <ellarekow@gmail.com>
+Date:   Wed Feb 2 18:32:05 2022 -0600
+
+    Fixed path generating and made mart,
+
+commit e0c86f8e30dea3e53e5ab2354af1b7124289aec5
+Author: ellarekow <ellarekow@gmail.com>
+Date:   Tue Feb 1 19:38:25 2022 -0600
+
+    Edits to generations stuff
+
+commit 6f279f772249aa9a6b75baea6cfe27eb07d24e32
+Author: ellarekow <ellarekow@gmail.com>
+Date:   Tue Feb 1 10:39:33 2022 -0600
+
+    Fixed randomize issues and now has colors
+
+commit 2f7bf0ab395b9fade5095dfd06809219a01be59a
+Author: ellarekow <ellarekow@gmail.com>
+Date:   Mon Jan 31 21:13:57 2022 -0600
+
+    Generates different terrain elements
+
+commit 1b928b1cb570563d61563f8b9d35a48e9e410f92
+Author: ellarekow <ellarekow@gmail.com>
+Date:   Mon Jan 31 09:27:12 2022 -0600
+
+    generates straight path and fixed board base
+
+commit 1cd94895d38dbf5bf6153c0e96414ebeabead653
+Author: ellarekow <ellarekow@gmail.com>
+Date:   Fri Jan 28 10:20:42 2022 -0600
+
+    Simple generation of the map
+
+commit 89fd987a460a4a920b86a8b12b483a1a0749a033
+Author: Ella Rekow <just.ella2001@gmail.com>
+Date:   Wed Jan 26 08:25:51 2022 -0600
+
+    Initial commit
